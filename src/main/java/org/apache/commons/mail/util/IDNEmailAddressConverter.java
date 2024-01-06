@@ -38,15 +38,15 @@ public class IDNEmailAddressConverter
      * @param email email address.
      * @return The ASCII representation
      */
-    public String toASCII(final String email)
-    {
-        final int idx = findAtSymbolIndex(email);
-
-        if (idx < 0)
-        {
-            return email;
+    public String toASCII(final String email) {
+        if (email == null) {
+            throw new IllegalArgumentException("email cannot be null");
         }
 
+        final int idx = findAtSymbolIndex(email);
+        if (idx < 0) {
+            return email;
+        }
         return getLocalPart(email, idx) + '@' + IDN.toASCII(getDomainPart(email, idx));
     }
 
@@ -88,7 +88,10 @@ public class IDNEmailAddressConverter
      */
     private String getLocalPart(final String email, final int idx)
     {
-        return email.substring(0, idx);
+        if (email == null) {
+            throw new IllegalArgumentException("email cannot be null");
+        }
+        else return email.substring(0, idx);
     }
 
     /**
