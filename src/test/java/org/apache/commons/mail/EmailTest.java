@@ -1009,36 +1009,34 @@ public class EmailTest extends AbstractEmailTest
     }
 
     @Test
-    public void testSendBadHostName() {
-        try {
+    public void testSendBadHostName()
+    {
+        try
+        {
             getMailServer();
 
             email = new MockEmailConcrete();
-            setupEmailDetails(email); // Grouped email setup in a separate method
-
-            try {
-                email.send();
-                fail("Should have thrown an exception");
-            } catch (final EmailException e) {
-                assertTrue(e.getCause() instanceof ParseException);
-            }
-        } finally {
-            fakeMailServer.stop();
-        }
-    }
-    private void setupEmailDetails(MockEmailConcrete email) {
-        try {
+            email.setSubject("Test Email #1 Subject");
+            email.setHostName("bad.host.com");
             email.setFrom("me@home.com");
             email.addTo("me@home.com");
             email.addCc("me@home.com");
             email.addBcc("me@home.com");
             email.addReplyTo("me@home.com");
-            email.setContent("test string object", " ; charset=" + EmailConstants.US_ASCII);
-        } catch (final EmailException e) {
-            e.printStackTrace();
+
+            email.setContent(
+                    "test string object",
+                    " ; charset=" + EmailConstants.US_ASCII);
+
+            email.send();
+            fail("Should have thrown an exception");
+        }
+        catch (final EmailException e)
+        {
+            assertTrue(e.getCause() instanceof ParseException);
+            fakeMailServer.stop();
         }
     }
-
 
     @Test
     public void testSendFromNotSet() throws Exception
