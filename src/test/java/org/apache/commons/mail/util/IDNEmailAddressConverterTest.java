@@ -17,6 +17,7 @@
 package org.apache.commons.mail.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import javax.mail.internet.InternetAddress;
 
@@ -37,13 +38,20 @@ public class IDNEmailAddressConverterTest {
     @Test
     public void testConvertInvalidEmailAddressToAscii()
     {
-        assertEquals(null, idnEmailConverter.toASCII(null));
+        assertNull(idnEmailConverter.toASCII(null));
         assertEquals("", idnEmailConverter.toASCII(""));
         assertEquals("@", idnEmailConverter.toASCII("@"));
         assertEquals("@@", idnEmailConverter.toASCII("@@"));
         assertEquals("foo", idnEmailConverter.toASCII("foo"));
         assertEquals("foo@", idnEmailConverter.toASCII("foo@"));
         assertEquals("@badhost.com", idnEmailConverter.toASCII("@badhost.com"));
+    }
+
+
+    @Test
+    public void testToASCIIWithNullEmail() {
+        String result = idnEmailConverter.toASCII(null);
+        assertNull(result);
     }
 
     @Test

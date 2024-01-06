@@ -40,6 +40,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.ParseException;
 
 import org.apache.commons.mail.mocks.MockEmailConcrete;
+import org.apache.commons.mail.util.IDNEmailAddressConverter;
 import org.junit.Before;
 import org.junit.Test;
 

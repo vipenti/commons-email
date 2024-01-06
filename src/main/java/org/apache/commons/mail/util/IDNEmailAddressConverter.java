@@ -16,6 +16,8 @@
  */
 package org.apache.commons.mail.util;
 
+import org.apache.commons.mail.EmailException;
+
 import javax.mail.internet.InternetAddress;
 import java.net.IDN;
 
@@ -40,7 +42,7 @@ public class IDNEmailAddressConverter
      */
     public String toASCII(final String email) {
         if (email == null) {
-            return null;
+            throw new IllegalArgumentException("email cannot be null");
         }
 
         final int idx = findAtSymbolIndex(email);
