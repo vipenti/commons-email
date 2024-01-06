@@ -37,8 +37,8 @@ public class EmailException
 {
     /** Serializable version identifier. */
     private static final long serialVersionUID = 5550674499282474616L;
-    private final Object lock = new Object();
-    private final Object printLock = new Object();
+    private final transient Object lock = new Object();
+    private final transient Object printLock = new Object();
 
     /**
      * Constructs a new {@code EmailException} with no
