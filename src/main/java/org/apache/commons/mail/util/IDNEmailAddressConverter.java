@@ -40,7 +40,7 @@ public class IDNEmailAddressConverter
      */
     public String toASCII(final String email) {
         if (email == null) {
-            throw new IllegalArgumentException("email cannot be null");
+            return null;
         }
 
         final int idx = findAtSymbolIndex(email);
@@ -89,7 +89,7 @@ public class IDNEmailAddressConverter
     private String getLocalPart(final String email, final int idx)
     {
         if (email == null) {
-            throw new IllegalArgumentException("email cannot be null");
+            return null;
         }
         else return email.substring(0, idx);
     }
