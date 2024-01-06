@@ -1026,6 +1026,7 @@ public class EmailTest extends AbstractEmailTest
             fakeMailServer.stop();
         }
     }
+
     private void setupEmailDetails(MockEmailConcrete email) {
         try {
             email.setFrom("me@home.com");
@@ -1035,9 +1036,10 @@ public class EmailTest extends AbstractEmailTest
             email.addReplyTo("me@home.com");
             email.setContent("test string object", " ; charset=" + EmailConstants.US_ASCII);
         } catch (final EmailException e) {
-            e.printStackTrace();
+            assertTrue(e.getCause() instanceof ParseException);
         }
     }
+
 
 
     @Test
