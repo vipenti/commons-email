@@ -89,7 +89,7 @@ public class IDNEmailAddressConverter
     private String getLocalPart(final String email, final int idx)
     {
         if (email == null) {
-            return null;
+            return "";
         }
         else return email.substring(0, idx);
     }
