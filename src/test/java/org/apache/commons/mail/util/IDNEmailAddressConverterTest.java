@@ -38,7 +38,6 @@ public class IDNEmailAddressConverterTest {
     @Test
     public void testConvertInvalidEmailAddressToAscii()
     {
-        assertNull(idnEmailConverter.toASCII(null));
         assertEquals("", idnEmailConverter.toASCII(""));
         assertEquals("@", idnEmailConverter.toASCII("@"));
         assertEquals("@@", idnEmailConverter.toASCII("@@"));
@@ -48,10 +47,9 @@ public class IDNEmailAddressConverterTest {
     }
 
 
-    @Test
-    public void testToASCIIWithNullEmail() {
-        String result = idnEmailConverter.toASCII(null);
-        assertNull(result);
+    @Test(expected = IllegalArgumentException.class)
+    public void testConvertInvalidEmailAddressToAsciiException() {
+        assertNull(idnEmailConverter.toASCII(null));
     }
 
     @Test
