@@ -1021,6 +1021,12 @@ public class EmailTest extends AbstractEmailTest
             email.setHostName("bad.host.com");
             email.setFrom("me@home.com");
             email.addTo("me@home.com");
+
+        } catch (final EmailException e) {
+            assertTrue(e.getCause() instanceof ParseException);
+        }
+
+        try {
             email.addCc("me@home.com");
             email.addBcc("me@home.com");
             email.addReplyTo("me@home.com");
