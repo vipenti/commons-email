@@ -1332,45 +1332,39 @@ public abstract class Email
         {
             this.message = this.createMimeMessage(this.getMailSession());
 
-            if (EmailUtils.isNotEmpty(this.subject))
+            if (EmailUtils.isNotEmpty(this.subject) && EmailUtils.isNotEmpty(this.charset))
             {
-                if (EmailUtils.isNotEmpty(this.charset))
-                {
                     this.message.setSubject(this.subject, this.charset);
-                }
-                else
-                {
-                    this.message.setSubject(this.subject);
-                }
             }
+            else
+            {
+                this.message.setSubject(this.subject);
+            }
+
 
             // update content type (and encoding)
             this.updateContentType(this.contentType);
 
-            if (this.content != null)
+            if (this.content != null && EmailConstants.TEXT_PLAIN.equalsIgnoreCase(this.contentType)
+                    && this.content instanceof String)
             {
-                if (EmailConstants.TEXT_PLAIN.equalsIgnoreCase(this.contentType)
-                        && this.content instanceof String)
-                {
                     // EMAIL-104: call explicitly setText to use default mime charset
                     //            (property "mail.mime.charset") in case none has been set
                     this.message.setText(this.content.toString(), this.charset);
-                }
-                else
-                {
-                    this.message.setContent(this.content, this.contentType);
-                }
             }
-            else if (this.emailBody != null)
+            else if(this.content != null && !(EmailConstants.TEXT_PLAIN.equalsIgnoreCase(this.contentType)
+                    && this.content instanceof String))
             {
-                if (this.contentType == null)
-                {
+                this.message.setContent(this.content, this.contentType);
+            }
+
+            else if (this.emailBody != null && this.contentType == null)
+            {
                     this.message.setContent(this.emailBody);
                 }
-                else
-                {
-                    this.message.setContent(this.emailBody, this.contentType);
-                }
+            else if(this.emailBody != null && this.contentType != null)
+            {
+                this.message.setContent(this.emailBody, this.contentType);
             }
             else
             {
@@ -1381,13 +1375,11 @@ public abstract class Email
             {
                 this.message.setFrom(this.fromAddress);
             }
-            else
+            else if(this.fromAddress == null && session.getProperty(EmailConstants.MAIL_SMTP_FROM) == null
+                    && session.getProperty(EmailConstants.MAIL_FROM) == null)
             {
-                if (session.getProperty(EmailConstants.MAIL_SMTP_FROM) == null
-                        && session.getProperty(EmailConstants.MAIL_FROM) == null)
-                {
-                    throw new EmailException("From address required");
-                }
+                throw new EmailException("From address required");
+
             }
 
             if (this.toList.size() + this.ccList.size() + this.bccList.size() == 0)
