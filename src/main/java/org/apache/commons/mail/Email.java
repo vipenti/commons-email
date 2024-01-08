@@ -55,6 +55,10 @@ import org.apache.commons.mail.util.IDNEmailAddressConverter;
 public abstract class Email
 {
     private static final InternetAddress[] EMPTY_INTERNET_ADDRESS_ARRAY = new InternetAddress[0];
+    private static final String TRUE = "true";
+    private static final String FALSE = "false";
+
+    private static final String EMAIL_EXCEPTION_MESSAGE = "Address List provided was invalid";
 
     /** @deprecated since 1.3, use {@link EmailConstants#SENDER_EMAIL} instead */
     @Deprecated
@@ -654,18 +658,18 @@ public abstract class Email
             properties.setProperty(EmailConstants.MAIL_DEBUG, String.valueOf(this.debug));
 
             properties.setProperty(EmailConstants.MAIL_TRANSPORT_STARTTLS_ENABLE,
-                    isStartTLSEnabled() ? "true" : "false");
+                    isStartTLSEnabled() ? TRUE : FALSE);
             properties.setProperty(EmailConstants.MAIL_TRANSPORT_STARTTLS_REQUIRED,
-                    isStartTLSRequired() ? "true" : "false");
+                    isStartTLSRequired() ? TRUE : FALSE);
 
             properties.setProperty(EmailConstants.MAIL_SMTP_SEND_PARTIAL,
-                    isSendPartial() ? "true" : "false");
+                    isSendPartial() ? TRUE : FALSE);
             properties.setProperty(EmailConstants.MAIL_SMTPS_SEND_PARTIAL,
-                    isSendPartial() ? "true" : "false");
+                    isSendPartial() ? TRUE : FALSE);
 
             if (this.authenticator != null)
             {
-                properties.setProperty(EmailConstants.MAIL_SMTP_AUTH, "true");
+                properties.setProperty(EmailConstants.MAIL_SMTP_AUTH, TRUE);
             }
 
             if (isSSLOnConnect())
@@ -673,12 +677,12 @@ public abstract class Email
                 properties.setProperty(EmailConstants.MAIL_PORT, this.sslSmtpPort);
                 properties.setProperty(EmailConstants.MAIL_SMTP_SOCKET_FACTORY_PORT, this.sslSmtpPort);
                 properties.setProperty(EmailConstants.MAIL_SMTP_SOCKET_FACTORY_CLASS, "javax.net.ssl.SSLSocketFactory");
-                properties.setProperty(EmailConstants.MAIL_SMTP_SOCKET_FACTORY_FALLBACK, "false");
+                properties.setProperty(EmailConstants.MAIL_SMTP_SOCKET_FACTORY_FALLBACK, FALSE);
             }
 
             if ((isSSLOnConnect() || isStartTLSEnabled()) && isSSLCheckServerIdentity())
             {
-                properties.setProperty(EmailConstants.MAIL_SMTP_SSL_CHECKSERVERIDENTITY, "true");
+                properties.setProperty(EmailConstants.MAIL_SMTP_SSL_CHECKSERVERIDENTITY, TRUE);
             }
 
             if (this.bounceAddress != null)
@@ -799,7 +803,7 @@ public abstract class Email
     {
         if (emails == null || emails.length == 0)
         {
-            throw new EmailException("Address List provided was invalid");
+            throw new EmailException(EMAIL_EXCEPTION_MESSAGE);
         }
 
         for (final String email : emails)
@@ -864,7 +868,7 @@ public abstract class Email
     {
         if (aCollection == null || aCollection.isEmpty())
         {
-            throw new EmailException("Address List provided was invalid");
+            throw new EmailException(EMAIL_EXCEPTION_MESSAGE);
         }
 
         this.toList = new ArrayList<>(aCollection);
@@ -909,7 +913,7 @@ public abstract class Email
     {
         if (emails == null || emails.length == 0)
         {
-            throw new EmailException("Address List provided was invalid");
+            throw new EmailException(EMAIL_EXCEPTION_MESSAGE);
         }
 
         for (final String email : emails)
@@ -973,7 +977,7 @@ public abstract class Email
     {
         if (aCollection == null || aCollection.isEmpty())
         {
-            throw new EmailException("Address List provided was invalid");
+            throw new EmailException(EMAIL_EXCEPTION_MESSAGE);
         }
 
         this.ccList = new ArrayList<>(aCollection);
@@ -1018,7 +1022,7 @@ public abstract class Email
     {
         if (emails == null || emails.length == 0)
         {
-            throw new EmailException("Address List provided was invalid");
+            throw new EmailException(EMAIL_EXCEPTION_MESSAGE);
         }
 
         for (final String email : emails)
@@ -1082,7 +1086,7 @@ public abstract class Email
     {
         if (aCollection == null || aCollection.isEmpty())
         {
-            throw new EmailException("Address List provided was invalid");
+            throw new EmailException(EMAIL_EXCEPTION_MESSAGE);
         }
 
         this.bccList = new ArrayList<>(aCollection);
@@ -1161,7 +1165,7 @@ public abstract class Email
     {
         if (aCollection == null || aCollection.isEmpty())
         {
-            throw new EmailException("Address List provided was invalid");
+            throw new EmailException(EMAIL_EXCEPTION_MESSAGE);
         }
 
         this.replyList = new ArrayList<>(aCollection);
@@ -1434,7 +1438,7 @@ public abstract class Email
 
             if (this.popBeforeSmtp)
             {
-                // TODO Why is this not a Store leak? When to close?
+                // Why is this not a Store leak? When to close?
                 final Store store = session.getStore("pop3");
                 store.connect(this.popHost, this.popUsername, this.popPassword);
             }

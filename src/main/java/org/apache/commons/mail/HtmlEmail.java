@@ -90,6 +90,14 @@ public class HtmlEmail extends MultiPartEmail
     /** suffix for default HTML mail. */
     private static final String HTML_MESSAGE_END = "</pre></body></html>";
 
+    private static final String HTML_INVALID_MESSAGE = "Invalid message supplied";
+
+    private static final String EXISTING_NAME_ERROR = "; existing names cannot be rebound";
+
+    private static final String FILE_STRING = "file ";
+
+    private static final String ALTERNATIVE = "alternative";
+
 
     /**
      * Text part of the message. This will be used as alternative text if
@@ -126,7 +134,7 @@ public class HtmlEmail extends MultiPartEmail
     {
         if (EmailUtils.isEmpty(aText))
         {
-            throw new EmailException("Invalid message supplied");
+            throw new EmailException("HTML_INVALID_MESSAGE");
         }
 
         this.text = aText;
@@ -146,7 +154,7 @@ public class HtmlEmail extends MultiPartEmail
     {
         if (EmailUtils.isEmpty(aHtml))
         {
-            throw new EmailException("Invalid message supplied");
+            throw new EmailException(HTML_INVALID_MESSAGE);
         }
 
         this.html = aHtml;
@@ -173,7 +181,7 @@ public class HtmlEmail extends MultiPartEmail
     {
         if (EmailUtils.isEmpty(msg))
         {
-            throw new EmailException("Invalid message supplied");
+            throw new EmailException(HTML_INVALID_MESSAGE);
         }
 
         setTextMsg(msg);
@@ -274,7 +282,7 @@ public class HtmlEmail extends MultiPartEmail
             }
             throw new EmailException("embedded name '" + name
                 + "' is already bound to URL " + urlDataSource.getURL()
-                + "; existing names cannot be rebound");
+                + EXISTING_NAME_ERROR);
         }
 
         // verify that the URL is valid
@@ -390,21 +398,21 @@ public class HtmlEmail extends MultiPartEmail
             }
             throw new EmailException("embedded name '" + file.getName()
                 + "' is already bound to file " + existingFilePath
-                + "; existing names cannot be rebound");
+                + EXISTING_NAME_ERROR);
         }
 
         // verify that the file is valid
         if (!file.exists())
         {
-            throw new EmailException("file " + filePath + " doesn't exist");
+            throw new EmailException(FILE_STRING + filePath + " doesn't exist");
         }
         if (!file.isFile())
         {
-            throw new EmailException("file " + filePath + " isn't a normal file");
+            throw new EmailException(FILE_STRING + filePath + " isn't a normal file");
         }
         if (!file.canRead())
         {
-            throw new EmailException("file " + filePath + " isn't readable");
+            throw new EmailException(FILE_STRING + filePath + " isn't readable");
         }
 
         return embed(new FileDataSource(file), file.getName(), cid);
@@ -437,7 +445,7 @@ public class HtmlEmail extends MultiPartEmail
             }
             throw new EmailException("embedded DataSource '" + name
                 + "' is already bound to name " + ii.getDataSource().toString()
-                + "; existing names cannot be rebound");
+                + EXISTING_NAME_ERROR);
         }
 
         final String cid = EmailUtils.randomAlphabetic(HtmlEmail.CID_LENGTH).toLowerCase();
@@ -536,7 +544,7 @@ public class HtmlEmail extends MultiPartEmail
             // If TEXT body was specified, create a alternative container and add it to the embeds container
             if (EmailUtils.isNotEmpty(this.text))
             {
-                bodyContainer = new MimeMultipart("alternative");
+                bodyContainer = new MimeMultipart(ALTERNATIVE);
                 final BodyPart bodyPart = createBodyPart();
                 try
                 {
@@ -559,14 +567,14 @@ public class HtmlEmail extends MultiPartEmail
             {
                 // If both HTML and TEXT bodies are provided, create an alternative
                 // container and add it to the root container
-                bodyContainer = new MimeMultipart("alternative");
+                bodyContainer = new MimeMultipart(ALTERNATIVE);
                 this.addPart(bodyContainer, 0);
             }
             else
             {
                 // no attachments or embedded images present, change the mimetype
                 // of the root container (= body container)
-                rootContainer.setSubType("alternative");
+                rootContainer.setSubType(ALTERNATIVE);
             }
         }
 

@@ -62,6 +62,8 @@ public class MultiPartEmail extends Email
     /** Indicates if attachments have been added to the message. */
     private boolean boolHasAttachments;
 
+    private static final String INVALID_DATASOURCE = "Invalid Datasource";
+
     /**
      * Sets the MIME subtype of the email.
      *
@@ -415,19 +417,19 @@ public class MultiPartEmail extends Email
     {
         if (ds == null)
         {
-            throw new EmailException("Invalid Datasource");
+            throw new EmailException(INVALID_DATASOURCE);
         }
         // verify that the DataSource is valid
         try (InputStream is = ds.getInputStream())
         {
             if (is == null)
             {
-                throw new EmailException("Invalid Datasource");
+                throw new EmailException(INVALID_DATASOURCE);
             }
         }
         catch (final IOException e)
         {
-            throw new EmailException("Invalid Datasource", e);
+            throw new EmailException(INVALID_DATASOURCE, e);
         }
         return attach(ds, name, description, EmailAttachment.ATTACHMENT);
     }
