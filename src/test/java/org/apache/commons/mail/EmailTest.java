@@ -1105,16 +1105,24 @@ public class EmailTest extends AbstractEmailTest
     @Test
     public void testSendCorrectSmtpPortContainedInException()
     {
+        getMailServer();
         try
         {
-            getMailServer();
-
             email = new MockEmailConcrete();
             email.setHostName("bad.host.com");
             email.setSSLOnConnect(true);
             email.setFrom(strTestMailFrom);
             email.addTo(strTestMailTo);
             email.setAuthentication(null, null);
+        }
+        catch (final EmailException e)
+        {
+            assertTrue(e.getMessage().contains("bad.host.com:465"));
+            fakeMailServer.stop();
+        }
+
+        try
+        {
             email.send();
             fail("Should have thrown an exception");
         }
