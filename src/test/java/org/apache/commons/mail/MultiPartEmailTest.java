@@ -277,6 +277,8 @@ public class MultiPartEmailTest extends AbstractEmailTest
             new URL(this.strTestURL),
             null,
             "Test Attachment Desc");
+
+        assertFalse(this.email.isBoolHasAttachments());
     }
 
     @Test
