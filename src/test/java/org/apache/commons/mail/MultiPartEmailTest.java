@@ -271,6 +271,8 @@ public class MultiPartEmailTest extends AbstractEmailTest
             new URL(this.strTestURL),
             "Test Attachment",
             "Test Attachment Desc");
+        
+        assertNotNull(this.email);
 
         // bad name
         this.email.attach(
