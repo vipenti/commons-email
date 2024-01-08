@@ -36,6 +36,8 @@ import org.apache.commons.mail.settings.EmailConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 /**
  * This are regression test sending REAL email to REAL mail
  * servers using REAL recipients.
@@ -124,6 +126,9 @@ public class EmailLiveTest extends AbstractEmailTest
         email.setMsg("This is a test mail ... :-)");
 
         EmailUtils.writeMimeMessage( new File("./target/test-emails/simplemail.eml"), send(email).getMimeMessage());
+
+        assertEquals("TestSimpleMail", email.getSubject());
+        assertEquals("This is a test mail ... :-)", email.getMimeMessage().getContent());
     }
 
     /**
