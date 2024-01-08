@@ -209,26 +209,12 @@ final class EmailUtils
         final char [] chars,
         final Random random)
     {
-        if (count == 0)
-        {
-            return "";
-        }
-        if (count < 0)
-        {
-            throw new IllegalArgumentException("Requested random string length " + count + " is less than 0.");
-        }
+        validateCount(count);
 
-        if (start == 0 && end == 0)
-        {
-            end = 'z' + 1;
-            start = ' ';
+        final int[] range = setupCharacterRange(start, end, letters, numbers);
 
-            if (!letters && !numbers)
-            {
-                start = 0;
-                end = Integer.MAX_VALUE;
-            }
-        }
+        start = range[0];
+        end = range[1];
 
         final StringBuilder buffer = new StringBuilder();
         final int gap = end - start;
@@ -258,6 +244,29 @@ final class EmailUtils
         }
 
         return buffer.toString();
+    }
+
+    private static void validateCount(int count) {
+        if (count == 0) {
+            return;
+        }
+        if (count < 0) {
+            throw new IllegalArgumentException("Requested random string length " + count + " is less than 0.");
+        }
+    }
+
+    private static int[] setupCharacterRange(int start, int end, boolean letters, boolean numbers) {
+        boolean condition = (start == 0 && end == 0);
+        if (condition) {
+            end = 'z' + 1;
+            start = ' ';
+        }
+
+        if (condition && (!letters && !numbers)) {
+            start = 0;
+            end = Integer.MAX_VALUE;
+        }
+        return new int[]{start, end};
     }
 
     /**
