@@ -1341,48 +1341,12 @@ public abstract class Email
                 this.message.setSubject(this.subject);
             }
 
-
             // update content type (and encoding)
             this.updateContentType(this.contentType);
 
-            if (this.content != null && EmailConstants.TEXT_PLAIN.equalsIgnoreCase(this.contentType)
-                    && this.content instanceof String)
-            {
-                    // EMAIL-104: call explicitly setText to use default mime charset
-                    //            (property "mail.mime.charset") in case none has been set
-                    this.message.setText(this.content.toString(), this.charset);
-            }
-            else if(this.content != null && !(EmailConstants.TEXT_PLAIN.equalsIgnoreCase(this.contentType)
-                    && this.content instanceof String))
-            {
-                this.message.setContent(this.content, this.contentType);
-            }
-
-            else if (this.emailBody != null && this.contentType == null)
-            {
-                    this.message.setContent(this.emailBody);
-                }
-            else if(this.emailBody != null && this.contentType != null)
-            {
-                this.message.setContent(this.emailBody, this.contentType);
-            }
-            else
-            {
-                this.message.setText("");
-            }
-
-            if (this.fromAddress != null)
-            {
-                this.message.setFrom(this.fromAddress);
-            }
-            else if(this.fromAddress == null && session.getProperty(EmailConstants.MAIL_SMTP_FROM) == null
-                    && session.getProperty(EmailConstants.MAIL_FROM) == null)
-            {
-                throw new EmailException("From address required");
-
-            }
-
-            checkMessage(this);
+            this.message = firstMessageCheck(this);
+            this.message = secondMessageCheck(this);
+            this.message = thirdMessageCheck(this);
 
             if (this.popBeforeSmtp)
             {
@@ -1396,7 +1360,48 @@ public abstract class Email
         }
     }
 
-    private void checkMessage(Email email) throws EmailException, MessagingException {
+    private MimeMessage firstMessageCheck(Email email) throws EmailException, MessagingException {
+
+        if (this.content != null && EmailConstants.TEXT_PLAIN.equalsIgnoreCase(this.contentType)
+                && this.content instanceof String)
+        {
+            // EMAIL-104: call explicitly setText to use default mime charset
+            //            (property "mail.mime.charset") in case none has been set
+            this.message.setText(this.content.toString(), this.charset);
+        }
+        else if(this.content != null && !(EmailConstants.TEXT_PLAIN.equalsIgnoreCase(this.contentType)
+                && this.content instanceof String))
+        {
+            this.message.setContent(this.content, this.contentType);
+        }
+
+        else if (this.emailBody != null && this.contentType == null)
+        {
+            this.message.setContent(this.emailBody);
+        }
+        else if(this.emailBody != null && this.contentType != null)
+        {
+            this.message.setContent(this.emailBody, this.contentType);
+        }
+        else
+        {
+            this.message.setText("");
+        }
+
+        if (this.fromAddress != null)
+        {
+            this.message.setFrom(this.fromAddress);
+        }
+        else if(this.fromAddress == null && session.getProperty(EmailConstants.MAIL_SMTP_FROM) == null
+                && session.getProperty(EmailConstants.MAIL_FROM) == null)
+        {
+            throw new EmailException("From address required");
+        }
+
+        return email.message;
+    }
+
+    private MimeMessage secondMessageCheck(Email email) throws EmailException, MessagingException {
         if (email.toList.size() + email.ccList.size() + email.bccList.size() == 0)
         {
             throw new EmailException("At least one receiver address required");
@@ -1423,6 +1428,12 @@ public abstract class Email
                     email.toInternetAddressArray(email.bccList));
         }
 
+        return email.message;
+
+    }
+
+    public MimeMessage thirdMessageCheck(Email email) throws MessagingException {
+
         if (!email.replyList.isEmpty())
         {
             email.message.setReplyTo(
@@ -1442,6 +1453,8 @@ public abstract class Email
         {
             email.message.setSentDate(getSentDate());
         }
+
+        return email.message;
     }
 
     /**
