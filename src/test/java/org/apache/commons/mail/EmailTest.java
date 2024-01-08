@@ -1072,6 +1072,8 @@ public class EmailTest extends AbstractEmailTest
          email.getSession().getProperties().setProperty(EmailConstants.MAIL_FROM, "me@home.com");
 
          email.send();
+
+        assertEquals(strTestMailServer, email.getHostName());
     }
 
     @Test
