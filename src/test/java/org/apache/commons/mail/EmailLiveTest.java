@@ -145,6 +145,9 @@ public class EmailLiveTest extends AbstractEmailTest
         email.addHeader("X-TestHeader", "This is a very long header value which should be folded into two lines, hopefully");
 
         EmailUtils.writeMimeMessage( new File("./target/test-emails/foldedheader.eml"), send(email).getMimeMessage());
+
+        assertEquals("TestFoldedHeaderMail", email.getSubject());
+        assertEquals("This is a very long header value which should be folded into two lines, hopefully", email.getHeader("X-TestHeader"));
     }
 
     /**
@@ -161,6 +164,9 @@ public class EmailLiveTest extends AbstractEmailTest
         email.attach(new File("./src/test/resources/attachments/logo.pdf"));
 
         EmailUtils.writeMimeMessage( new File("./target/test-emails/multipart.eml"), send(email).getMimeMessage());
+
+        assertEquals("TestMultiPartMail", email.getSubject());
+        assertEquals(true, email.isBoolHasAttachments());
     }
 
     /**
@@ -201,6 +207,8 @@ public class EmailLiveTest extends AbstractEmailTest
 
         EmailUtils.writeMimeMessage( new File("./target/test-emails/htmlemail1.eml"), send(htmlEmail1).getMimeMessage());
 
+        assertEquals(htmlMsg, htmlEmail1.html);
+
         // 2) text + html content + image as attachment
 
         final HtmlEmail htmlEmail2 = (HtmlEmail) create(HtmlEmail.class);
@@ -213,6 +221,8 @@ public class EmailLiveTest extends AbstractEmailTest
         htmlEmail2.attach(url, "Apache Logo", "The official Apache logo" );
 
         EmailUtils.writeMimeMessage( new File("./target/test-emails/htmlemail2.eml"), send(htmlEmail2).getMimeMessage());
+
+        assertEquals(true, htmlEmail2.isBoolHasAttachments());
 
         // 3) text + html content + inline image
 
@@ -229,6 +239,8 @@ public class EmailLiveTest extends AbstractEmailTest
 
         EmailUtils.writeMimeMessage( new File("./target/test-emails/htmlemail3.eml"), send(htmlEmail3).getMimeMessage());
 
+        assertEquals(htmlMsg, htmlEmail3.html);
+
         // 4) text + html content + inline image + attachment
 
         final HtmlEmail htmlEmail4 = (HtmlEmail) create(HtmlEmail.class);
@@ -242,6 +254,8 @@ public class EmailLiveTest extends AbstractEmailTest
         htmlEmail4.attach(attachment);
 
         EmailUtils.writeMimeMessage( new File("./target/test-emails/htmlemail4.eml"), send(htmlEmail4).getMimeMessage());
+
+        assertEquals(htmlMsg, htmlEmail4.html);
     }
 
     /**
@@ -273,6 +287,8 @@ public class EmailLiveTest extends AbstractEmailTest
         email.attach(attachment, attachmentName, "Attachment in Greek");
 
         EmailUtils.writeMimeMessage( new File("./target/test-emails/correct-encoding.eml"), send(email).getMimeMessage());
+
+        assertEquals(MultiPartEmail.class, email.getClass());
     }
 
     /**
@@ -294,6 +310,8 @@ public class EmailLiveTest extends AbstractEmailTest
         email.setHtmlMsg(htmlMsg1);
 
         EmailUtils.writeMimeMessage( new File("./target/test-emails/testImageHtmlEmailLocal.eml"), send(email).getMimeMessage());
+
+        assertEquals(ImageHtmlEmail.class, email.getClass());
     }
 
     /**
@@ -319,6 +337,8 @@ public class EmailLiveTest extends AbstractEmailTest
             email.setHtmlMsg(htmlMsg);
 
             EmailUtils.writeMimeMessage( new File("./target/test-emails/testImageHtmlEmailRemote.eml"), send(email).getMimeMessage());
+
+            assertEquals(ImageHtmlEmail.class, email.getClass());
         }
     }
 
@@ -350,6 +370,8 @@ public class EmailLiveTest extends AbstractEmailTest
             personalizedEmail.setMsg("This is a personalized test mail ... :-)");
             personalizedEmail.buildMimeMessage();
             emails.add(personalizedEmail);
+
+            assertEquals("This is a personalized test mail ... :-)", personalizedEmail.message.getContent());
         }
 
         // send the list of emails using a single 'Transport' instance.
@@ -362,6 +384,7 @@ public class EmailLiveTest extends AbstractEmailTest
                 final MimeMessage mimeMessage = personalizedEmail.getMimeMessage();
                 Transport.send(mimeMessage);
                 System.out.println("Successfully sent the following email : " + mimeMessage.getMessageID());
+
             }
 
             transport.close();
@@ -387,6 +410,8 @@ public class EmailLiveTest extends AbstractEmailTest
         email.setSendPartial(true);
 
         EmailUtils.writeMimeMessage( new File("./target/test-emails/partialmail.eml"), send(email).getMimeMessage());
+
+        assertEquals(EmailConfiguration.TEST_TO, email.toList.get(0).toString());
     }
 
 }
