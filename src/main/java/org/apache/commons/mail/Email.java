@@ -638,72 +638,73 @@ public abstract class Email
      */
     public Session getMailSession() throws EmailException
     {
-        if (this.session == null)
+        if (this.session != null)
+            return this.session;
+
+        final Properties properties = new Properties(System.getProperties());
+        properties.setProperty(EmailConstants.MAIL_TRANSPORT_PROTOCOL, EmailConstants.SMTP);
+
+        if (EmailUtils.isEmpty(this.hostName))
         {
-            final Properties properties = new Properties(System.getProperties());
-            properties.setProperty(EmailConstants.MAIL_TRANSPORT_PROTOCOL, EmailConstants.SMTP);
-
-            if (EmailUtils.isEmpty(this.hostName))
-            {
-                this.hostName = properties.getProperty(EmailConstants.MAIL_HOST);
-            }
-
-            if (EmailUtils.isEmpty(this.hostName))
-            {
-                throw new EmailException("Cannot find valid hostname for mail session");
-            }
-
-            properties.setProperty(EmailConstants.MAIL_PORT, this.smtpPort);
-            properties.setProperty(EmailConstants.MAIL_HOST, this.hostName);
-            properties.setProperty(EmailConstants.MAIL_DEBUG, String.valueOf(this.debug));
-
-            properties.setProperty(EmailConstants.MAIL_TRANSPORT_STARTTLS_ENABLE,
-                    isStartTLSEnabled() ? TRUE : FALSE);
-            properties.setProperty(EmailConstants.MAIL_TRANSPORT_STARTTLS_REQUIRED,
-                    isStartTLSRequired() ? TRUE : FALSE);
-
-            properties.setProperty(EmailConstants.MAIL_SMTP_SEND_PARTIAL,
-                    isSendPartial() ? TRUE : FALSE);
-            properties.setProperty(EmailConstants.MAIL_SMTPS_SEND_PARTIAL,
-                    isSendPartial() ? TRUE : FALSE);
-
-            if (this.authenticator != null)
-            {
-                properties.setProperty(EmailConstants.MAIL_SMTP_AUTH, TRUE);
-            }
-
-            if (isSSLOnConnect())
-            {
-                properties.setProperty(EmailConstants.MAIL_PORT, this.sslSmtpPort);
-                properties.setProperty(EmailConstants.MAIL_SMTP_SOCKET_FACTORY_PORT, this.sslSmtpPort);
-                properties.setProperty(EmailConstants.MAIL_SMTP_SOCKET_FACTORY_CLASS, "javax.net.ssl.SSLSocketFactory");
-                properties.setProperty(EmailConstants.MAIL_SMTP_SOCKET_FACTORY_FALLBACK, FALSE);
-            }
-
-            if ((isSSLOnConnect() || isStartTLSEnabled()) && isSSLCheckServerIdentity())
-            {
-                properties.setProperty(EmailConstants.MAIL_SMTP_SSL_CHECKSERVERIDENTITY, TRUE);
-            }
-
-            if (this.bounceAddress != null)
-            {
-                properties.setProperty(EmailConstants.MAIL_SMTP_FROM, this.bounceAddress);
-            }
-
-            if (this.socketTimeout > 0)
-            {
-                properties.setProperty(EmailConstants.MAIL_SMTP_TIMEOUT, Integer.toString(this.socketTimeout));
-            }
-
-            if (this.socketConnectionTimeout > 0)
-            {
-                properties.setProperty(EmailConstants.MAIL_SMTP_CONNECTIONTIMEOUT, Integer.toString(this.socketConnectionTimeout));
-            }
-
-            // changed this (back) to getInstance due to security exceptions
-            // caused when testing using maven
-            this.session = Session.getInstance(properties, this.authenticator);
+            this.hostName = properties.getProperty(EmailConstants.MAIL_HOST);
         }
+
+        if (EmailUtils.isEmpty(this.hostName))
+        {
+            throw new EmailException("Cannot find valid hostname for mail session");
+        }
+
+        properties.setProperty(EmailConstants.MAIL_PORT, this.smtpPort);
+        properties.setProperty(EmailConstants.MAIL_HOST, this.hostName);
+        properties.setProperty(EmailConstants.MAIL_DEBUG, String.valueOf(this.debug));
+
+        properties.setProperty(EmailConstants.MAIL_TRANSPORT_STARTTLS_ENABLE,
+                isStartTLSEnabled() ? TRUE : FALSE);
+        properties.setProperty(EmailConstants.MAIL_TRANSPORT_STARTTLS_REQUIRED,
+                isStartTLSRequired() ? TRUE : FALSE);
+
+        properties.setProperty(EmailConstants.MAIL_SMTP_SEND_PARTIAL,
+                isSendPartial() ? TRUE : FALSE);
+        properties.setProperty(EmailConstants.MAIL_SMTPS_SEND_PARTIAL,
+                isSendPartial() ? TRUE : FALSE);
+
+        if (this.authenticator != null)
+        {
+            properties.setProperty(EmailConstants.MAIL_SMTP_AUTH, TRUE);
+        }
+
+        if (isSSLOnConnect())
+        {
+            properties.setProperty(EmailConstants.MAIL_PORT, this.sslSmtpPort);
+            properties.setProperty(EmailConstants.MAIL_SMTP_SOCKET_FACTORY_PORT, this.sslSmtpPort);
+            properties.setProperty(EmailConstants.MAIL_SMTP_SOCKET_FACTORY_CLASS, "javax.net.ssl.SSLSocketFactory");
+            properties.setProperty(EmailConstants.MAIL_SMTP_SOCKET_FACTORY_FALLBACK, FALSE);
+        }
+
+        if ((isSSLOnConnect() || isStartTLSEnabled()) && isSSLCheckServerIdentity())
+        {
+            properties.setProperty(EmailConstants.MAIL_SMTP_SSL_CHECKSERVERIDENTITY, TRUE);
+        }
+
+        if (this.bounceAddress != null)
+        {
+            properties.setProperty(EmailConstants.MAIL_SMTP_FROM, this.bounceAddress);
+        }
+
+        if (this.socketTimeout > 0)
+        {
+            properties.setProperty(EmailConstants.MAIL_SMTP_TIMEOUT, Integer.toString(this.socketTimeout));
+        }
+
+        if (this.socketConnectionTimeout > 0)
+        {
+            properties.setProperty(EmailConstants.MAIL_SMTP_CONNECTIONTIMEOUT, Integer.toString(this.socketConnectionTimeout));
+        }
+
+        // changed this (back) to getInstance due to security exceptions
+        // caused when testing using maven
+        this.session = Session.getInstance(properties, this.authenticator);
+
         return this.session;
     }
 
