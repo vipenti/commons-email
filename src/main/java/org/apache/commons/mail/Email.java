@@ -1382,56 +1382,10 @@ public abstract class Email
 
             }
 
-            if (this.toList.size() + this.ccList.size() + this.bccList.size() == 0)
-            {
-                throw new EmailException("At least one receiver address required");
-            }
-
-            if (!this.toList.isEmpty())
-            {
-                this.message.setRecipients(
-                    Message.RecipientType.TO,
-                    this.toInternetAddressArray(this.toList));
-            }
-
-            if (!this.ccList.isEmpty())
-            {
-                this.message.setRecipients(
-                    Message.RecipientType.CC,
-                    this.toInternetAddressArray(this.ccList));
-            }
-
-            if (!this.bccList.isEmpty())
-            {
-                this.message.setRecipients(
-                    Message.RecipientType.BCC,
-                    this.toInternetAddressArray(this.bccList));
-            }
-
-            if (!this.replyList.isEmpty())
-            {
-                this.message.setReplyTo(
-                    this.toInternetAddressArray(this.replyList));
-            }
-
-
-            if (!this.headers.isEmpty())
-            {
-                for (final Map.Entry<String, String> entry : this.headers.entrySet())
-                {
-                    final String foldedValue = createFoldedHeaderValue(entry.getKey(), entry.getValue());
-                    this.message.addHeader(entry.getKey(), foldedValue);
-                }
-            }
-
-            if (this.message.getSentDate() == null)
-            {
-                this.message.setSentDate(getSentDate());
-            }
+            checkMessage(this);
 
             if (this.popBeforeSmtp)
             {
-                // Why is this not a Store leak? When to close?
                 final Store store = session.getStore("pop3");
                 store.connect(this.popHost, this.popUsername, this.popPassword);
             }
@@ -1439,6 +1393,54 @@ public abstract class Email
         catch (final MessagingException me)
         {
             throw new EmailException(me);
+        }
+    }
+
+    private void checkMessage(Email email) throws EmailException, MessagingException {
+        if (email.toList.size() + email.ccList.size() + email.bccList.size() == 0)
+        {
+            throw new EmailException("At least one receiver address required");
+        }
+
+        if (!email.toList.isEmpty())
+        {
+            email.message.setRecipients(
+                    Message.RecipientType.TO,
+                    email.toInternetAddressArray(email.toList));
+        }
+
+        if (!email.ccList.isEmpty())
+        {
+            email.message.setRecipients(
+                    Message.RecipientType.CC,
+                    email.toInternetAddressArray(email.ccList));
+        }
+
+        if (!email.bccList.isEmpty())
+        {
+            email.message.setRecipients(
+                    Message.RecipientType.BCC,
+                    email.toInternetAddressArray(email.bccList));
+        }
+
+        if (!email.replyList.isEmpty())
+        {
+            email.message.setReplyTo(
+                    email.toInternetAddressArray(email.replyList));
+        }
+
+        if (!email.headers.isEmpty())
+        {
+            for (final Map.Entry<String, String> entry : email.headers.entrySet())
+            {
+                final String foldedValue = createFoldedHeaderValue(entry.getKey(), entry.getValue());
+                email.message.addHeader(entry.getKey(), foldedValue);
+            }
+        }
+
+        if (email.message.getSentDate() == null)
+        {
+            email.message.setSentDate(getSentDate());
         }
     }
 
