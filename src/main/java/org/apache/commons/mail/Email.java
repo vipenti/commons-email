@@ -1379,7 +1379,7 @@ public abstract class Email
         {
             this.message.setContent(this.emailBody);
         }
-        else if(this.emailBody != null && this.contentType != null)
+        else if(this.emailBody != null)
         {
             this.message.setContent(this.emailBody, this.contentType);
         }
@@ -1392,7 +1392,7 @@ public abstract class Email
         {
             this.message.setFrom(this.fromAddress);
         }
-        else if(this.fromAddress == null && session.getProperty(EmailConstants.MAIL_SMTP_FROM) == null
+        else if(session.getProperty(EmailConstants.MAIL_SMTP_FROM) == null
                 && session.getProperty(EmailConstants.MAIL_FROM) == null)
         {
             throw new EmailException("From address required");

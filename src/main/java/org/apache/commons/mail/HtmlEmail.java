@@ -576,7 +576,7 @@ public class HtmlEmail extends MultiPartEmail
             rootContainer.setSubType(ALTERNATIVE);
         }
 
-        ArrayList results = setMsg(bodyContainer, bodyEmbedsContainer);
+        ArrayList<Object> results = setMsg(bodyContainer, bodyEmbedsContainer);
         bodyContainer = (MimeMultipart) results.get(0);
         bodyEmbedsContainer = (MimeMultipart) results.get(1);
         msgHtml = (MimeBodyPart) results.get(2);
@@ -584,7 +584,7 @@ public class HtmlEmail extends MultiPartEmail
 
     }
 
-    private ArrayList setMsg(MimeMultipart bodyContainer, MimeMultipart bodyEmbedsContainer) throws MessagingException {
+    private ArrayList<Object> setMsg(MimeMultipart bodyContainer, MimeMultipart bodyEmbedsContainer) throws MessagingException {
 
         MimeBodyPart msgText = null;
         MimeBodyPart msgHtml = null;
@@ -633,7 +633,7 @@ public class HtmlEmail extends MultiPartEmail
             msgText.setText(this.text, this.charset);
         }
 
-        ArrayList results = new ArrayList();
+        ArrayList<Object> results = new ArrayList<Object>();
         results.add(bodyContainer);
         results.add(bodyEmbedsContainer);
         results.add(msgHtml);
