@@ -16,8 +16,6 @@
  */
 package org.apache.commons.mail.util;
 
-import org.apache.commons.mail.EmailException;
-
 import javax.mail.internet.InternetAddress;
 import java.net.IDN;
 

@@ -178,40 +178,38 @@ public class MimeMessageParser
                 && !Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition()))
         {
             plainContent = (String) part.getContent();
+            return;
+        }
+
+        if (isMimeType(part, "text/html") && htmlContent == null
+                && !Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition()))
+        {
+            htmlContent = (String) part.getContent();
+            return;
+        }
+
+        if (isMimeType(part, "multipart/*"))
+        {
+            this.isMultiPart = true;
+            final Multipart mp = (Multipart) part.getContent();
+            final int count = mp.getCount();
+
+            // iterate over all MimeBodyPart
+
+            for (int i = 0; i < count; i++)
+            {
+                parse(mp, (MimeBodyPart) mp.getBodyPart(i));
+            }
         }
         else
         {
-            if (isMimeType(part, "text/html") && htmlContent == null
-                    && !Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition()))
+            final String cid = stripContentId(part.getContentID());
+            final DataSource ds = createDataSource(parent, part);
+            if (cid != null)
             {
-                htmlContent = (String) part.getContent();
+                this.cidMap.put(cid, ds);
             }
-            else
-            {
-                if (isMimeType(part, "multipart/*"))
-                {
-                    this.isMultiPart = true;
-                    final Multipart mp = (Multipart) part.getContent();
-                    final int count = mp.getCount();
-
-                    // iterate over all MimeBodyPart
-
-                    for (int i = 0; i < count; i++)
-                    {
-                        parse(mp, (MimeBodyPart) mp.getBodyPart(i));
-                    }
-                }
-                else
-                {
-                    final String cid = stripContentId(part.getContentID());
-                    final DataSource ds = createDataSource(parent, part);
-                    if (cid != null)
-                    {
-                        this.cidMap.put(cid, ds);
-                    }
-                    this.attachmentList.add(ds);
-                }
-            }
+            this.attachmentList.add(ds);
         }
     }
 
