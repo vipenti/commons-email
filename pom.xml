@@ -445,6 +445,34 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.6.7</version>
+                <configuration>
+                    <targetClasses>
+                        <param>org.apache.commons.mail.Email*</param>
+                        <param>org.apache.commons.mail.SimpleEmail*</param>
+                        <param>org.apache.commons.mail.EmailAttachment*</param>
+                        <param>org.apache.commons.mail.EmailLive*</param>
+                        <param>org.apache.commons.mail.EmailException*</param>
+                        <param>org.apache.commons.mail.EmailUtils</param>
+                        <param>org.apache.commons.mail.util*</param>
+                        <param>org.apache.commons.mail.resolver*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>org.apache.commons.mail.EmailTest*</param>
+                        <param>org.apache.commons.mail.SimpleEmailTest*</param>
+                        <param>org.apache.commons.mail.EmailAttachmentTest*</param>
+                        <param>org.apache.commons.mail.EmailLiveTest*</param>
+                        <param>org.apache.commons.mail.InvalidAddressTest*</param>
+                        <param>org.apache.commons.mail.SendWithAttachmentsTest*</param>
+                        <param>org.apache.commons.mail.EmailUtilsTest</param>
+                        <param>org.apache.commons.mail.util*</param>
+                        <param>org.apache.commons.mail.resolver*</param>
+                    </targetTests>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
