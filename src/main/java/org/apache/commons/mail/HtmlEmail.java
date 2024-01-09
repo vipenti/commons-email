@@ -21,10 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -579,6 +576,18 @@ public class HtmlEmail extends MultiPartEmail
             rootContainer.setSubType(ALTERNATIVE);
         }
 
+        ArrayList results = setMsg(bodyContainer, bodyEmbedsContainer);
+        bodyContainer = (MimeMultipart) results.get(0);
+        bodyEmbedsContainer = (MimeMultipart) results.get(1);
+        msgHtml = (MimeBodyPart) results.get(2);
+        msgText = (MimeBodyPart) results.get(3);
+
+    }
+
+    private ArrayList setMsg(MimeMultipart bodyContainer, MimeMultipart bodyEmbedsContainer) throws MessagingException {
+
+        MimeBodyPart msgText = null;
+        MimeBodyPart msgHtml = null;
         if (EmailUtils.isNotEmpty(this.html))
         {
             msgHtml = new MimeBodyPart();
@@ -623,6 +632,14 @@ public class HtmlEmail extends MultiPartEmail
             //            (property "mail.mime.charset") in case none has been set
             msgText.setText(this.text, this.charset);
         }
+
+        ArrayList results = new ArrayList();
+        results.add(bodyContainer);
+        results.add(bodyEmbedsContainer);
+        results.add(msgHtml);
+        results.add(msgText);
+
+        return results;
     }
 
     /**
