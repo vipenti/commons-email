@@ -34,7 +34,7 @@ public class EmailBenchmark {
     @BenchmarkMode(Mode.Throughput)
     @Measurement(iterations = 10)
     @Warmup(iterations = 10, time = 1,   timeUnit = TimeUnit.SECONDS)
-    @Threads(100)
+    @Threads(3)
     public void createAndConfigureEmail() throws EmailException {
         Email email = new SimpleEmail();
         email.setHostName("smtp.libero.it");
@@ -53,7 +53,7 @@ public class EmailBenchmark {
         Options opt = new OptionsBuilder()
                 .include(EmailBenchmark.class.getSimpleName())
                 .forks(3)
-                .threads(100)
+                .threads(10)
                 .build();
 
         new Runner(opt).run();
